@@ -1,6 +1,7 @@
 ﻿using EFCoreRelationships.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,8 @@ namespace EFCoreRelationships.Tests
 
         public DatabaseConnectionTest()
         {
-            _app = new WebApplicationFactory<Program>()
-                    .WithWebHostBuilder(builder =>
-                    {
-                        builder.ConfigureServices(services =>
-                        {
-                            
-                        });
-                    });
+            _app = new WebApplicationFactory<Program>();
+
         }
 
         [Fact]
@@ -32,12 +27,22 @@ namespace EFCoreRelationships.Tests
             using (var scope = _app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<DbContext>();
+                var config = services.GetRequiredService<IConfiguration>();
+
+                var options = new DbContextOptionsBuilder<DataContext>()
+                    .UseSqlServer(config.GetConnectionString("DefaultConnection")).Options;
+
+                var context = new DataContext(options);
 
                 var isCreated = context.Database.EnsureCreated();
 
+                var isConnectionSuccessful = context.Database.CanConnect();
+
+                Assert.True(isConnectionSuccessful);
+
                 Assert.True(isCreated);
             }
+
         }
     }
 }
