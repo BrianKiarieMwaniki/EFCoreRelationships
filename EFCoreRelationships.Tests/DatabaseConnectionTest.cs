@@ -22,7 +22,7 @@ namespace EFCoreRelationships.Tests
         }
 
         [Fact]
-        public void TestDBConnection()
+        public void TestDBConnectionComplex()
         {
             using (var scope = _app.Services.CreateScope())
             {
@@ -43,6 +43,19 @@ namespace EFCoreRelationships.Tests
                 Assert.True(isCreated);
             }
 
+        }
+
+        [Fact]
+        public void TestDbConnectionSimple()
+        {
+           using(var scope = _app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<DataContext>();
+                var canConnect = context.Database.CanConnect();
+
+                Assert.True(canConnect);
+            }
         }
     }
 }
