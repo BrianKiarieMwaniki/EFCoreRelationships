@@ -7,5 +7,6 @@
         public string RpgClass { get; set; } = Rpgs.Knight.ToString();
         public User? User { get; set; }
         public int UserId { get; set; }
+        public Weapon? Weapon { get; set; }
     }
 }
