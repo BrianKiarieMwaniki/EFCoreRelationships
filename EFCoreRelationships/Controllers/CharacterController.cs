@@ -18,5 +18,16 @@ namespace EFCoreRelationships.Controllers
         {
            return await _context.Characters.Where(c => c.UserId == userId).ToListAsync();
         }
+        
+        
+        [HttpPost]
+        public async Task<ActionResult<List<Character>>> Post(Character character)
+        {
+           
+           _context.Characters.Add(character);
+            await _context.SaveChangesAsync();
+
+            return await Get(character.UserId);
+        }
     }
 }
